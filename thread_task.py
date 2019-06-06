@@ -31,10 +31,24 @@ class Task(threading.Thread):
         while True:
             try:
                 self.socket.connect(self.addr)
-                print('send task request')
+
+                response = requests.get(UI_HOST + '/container/insert',
+                                        params={'mip': self.addr[0],
+                                                'port': self.addr[1],
+                                                'pip':socket.gethostbyname(socket.getfqdn(socket.gethostname())),
+                                                'cstate': 1})
+                params = {'mip': self.addr[0],
+                          'port': self.addr[1],
+                          'pip': socket.gethostbyname(socket.getfqdn(socket.gethostname())),
+                          'cstate': 1}
+
+                print('插入容器',response.json())
+
+
             except Exception as e:
                 # self.socket.close()
 #                print('error occured at ', self.addr)
+                print(e)
                 if try_times < 50:
                     try_times += 1
                     continue
@@ -50,7 +64,14 @@ class Task(threading.Thread):
 
             #print(response.json())
             fid = response.json()
-            # print(data)
+
+            response = requests.get(UI_HOST + '/container/updatebyAddr',
+                                    params={'mip': self.addr[0], 'port': self.addr[1],
+                                            'cstate': 2})
+
+            print('改变状态',response.json())
+
+            print(data)
             self.socket.send(data.encode())
             
             print('waiting for feedback...')
@@ -69,6 +90,12 @@ class Task(threading.Thread):
                                         params={'fid': fid, 'result':feedback['fitness'] })
 
                 print(res.json())
+
+                response = requests.get(UI_HOST + '/container/updatebyAddr',
+                                        params={'mip': self.addr[0], 'port': self.addr[1],
+                                                'cstate': 1})
+
+                print('改变状态', response.json())
 
                 self.socket.close()
                 break
