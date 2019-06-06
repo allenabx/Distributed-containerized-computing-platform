@@ -1,0 +1,11 @@
+先修改自己的ip，在host.conf里面修改LEADER改为自己的ip
+路径可能有问题，修改host.conf里面BASE_CMD,改成当前路径
+再修改mainifest.py里面的host_port改自己的ip
+先运行cma_es_dc.py,在终端输入‘python3 cma_es_dc.py'
+再运行server.py，在终端输入’python3 server.py'
+
+
+
+能正确运行后会出现walkout文件，使用‘Python result_plot.py'画出图像，应该是递减的趋势
+然后主要读一下cmd_push.sh和file_push.sh以及cma_es_dc.py，server.py的文件，后面链接多台机子需要
+
